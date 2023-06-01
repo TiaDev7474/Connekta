@@ -1,0 +1,45 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+    .h1{
+        @apply font-sans text-[4rem] font-bold
+    }
+   .h2{
+      @apply font-sans text-[3rem] font-bold
+  } 
+   .h3{
+      @apply font-sans text-[2rem] font-bold
+   }
+   .textBody{
+       @apply font-sans text-[1rem] font-normal 
+   }
+   .label {
+      @apply flex border border-gray-600 py-2 px-3 justify-start items-center
+   }
+   .input{
+       @apply flex-1 py-1 px-2 bg-transparent focus:outline-none placeholder:text-[#00000074] placeholder:font-light
+   }
+   .brandbutton{
+      @apply flex items-center   w-full py-2 px-3 text-textdark capitalize font-light text-[18px] border  border-gray-600 hover:bg-[#ffffff6a]
+   }
+
+}
+*{
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
