@@ -57,8 +57,6 @@ module.exports = {
                       })
                     .catch(err =>res.status(401).json({message:'Email already in use'}))
             
-          
-       
         }
        
 }

@@ -25,7 +25,7 @@ export const UserProvider = ({children}) => {
     },[])
 
     const updateUser = useCallback( (user) =>{
-          localStorage.setItem('User')
+          localStorage.setItem('User',JSON.stringify(user))
           setUser(user)
     },[])
 

@@ -15,10 +15,22 @@ const UserSchema = mongoose.Schema({
       password:{
           type:String
       },
+      federated_credentials:{
+         provider:{
+             type:String
+         },
+         profileID:{
+             type:String
+         }
+      },
       loginAttempt:{
            type:Number ,
            required:true,
            default: 0
+      },
+      account_verify:{
+          type: Boolean,
+          default:false,
       },
       lockUntil:{
            type:Number

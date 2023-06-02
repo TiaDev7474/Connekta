@@ -3,7 +3,7 @@ import  google from "../../../assets/google.svg"
 import  facebook from "../../../assets/facebook.svg"
 function SocialMediabutton({brandName}) {
     const brandLogo = brandName ==="facebook" ? facebook : google
-    const href = brandName ==="facebook" ? "/login/federated/facebook" :""
+    const href = brandName ==="facebook" ? "http://localhost:8000/auth/login/federated/facebook" :""
   return (
      <a href={href} className='brandbutton  mb-5'>
         <span className='w-[50px]  '>
