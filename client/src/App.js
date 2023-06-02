@@ -7,6 +7,7 @@ import
      Routes 
     } from 'react-router-dom';
 import AuthLayout from './layout/AuthLayout';
+import UserLayout from './layout/UserLayout';
 function App() {
     
   return (
@@ -14,6 +15,7 @@ function App() {
          <BrowserRouter>
               <Routes>
                   <Route path='/auth/*' element={<AuthLayout />} />
+                  <Route path='/*' element={<UserLayout/>}/>
               </Routes>
          </BrowserRouter>
      </div>

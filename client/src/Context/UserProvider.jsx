@@ -1,29 +1,38 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocalstorage } from '../hooks/useLocalStorage';
 
+const initialUser = {
+      user:null,
+      updateUser: () => null,
+      removeUser:() => null
 
-export const UserContext =  createContext()
+}
+export const UserContext =  createContext(initialUser)
 
 export const UserProvider = ({children}) => {
     const [user, setUser] = useState(null)
-    const { setItem , getItem , removeItem } = useLocalstorage()
 
     useEffect(() => {
-        const storedUser = getItem('user');
-        if(storedUser){
-             setUser(storedUser)
-        }
-    },[getItem])
+      async function fetchUserFromStore(){
+            const storedUser = localStorage.getItem('User');
+            console.log(storedUser)
+            if(storedUser){
+                 setUser(storedUser)
+            }
+      }
+      fetchUserFromStore()
+       
+    },[])
 
     const updateUser = useCallback( (user) =>{
-          setItem('User', JSON.stringify(user))
+          localStorage.setItem('User')
           setUser(user)
-    },[setItem])
+    },[])
 
     const removeUser = useCallback(() => {
-        removeItem('User')
+        localStorage.removeItem('User')
         setUser(null)
-    },[removeItem])
+    },[])
 
 
    

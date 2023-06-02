@@ -1,18 +1,22 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
-import { useUserContext } from '../hooks/useUserContext';
+import { Navigate} from 'react-router-dom'
 
-const WithAuth= (Component) =>{
-    const { user } = useUserContext();
-    return (props) => {
-        console.log(user)
-        if(user){
-            return <Component {...props} />
-           
+
+const WithAuth = (WrappedComponent) => {
+    const  token =  localStorage.getItem('Token');
+    const AuthHOC = (props) => {
+
+        console.log(token)
+        if (!token) {
+          // Redirect to login if token is missing
+          return  <Navigate replace to='/auth/login'/>
+        
         }
-        return <Redirect to='/login' />
-       
-    }
-}
-
-export default WithAuth
+  
+      return <WrappedComponent {...props} />;
+    };
+  
+    return AuthHOC;
+  };
+  
+  export default WithAuth;

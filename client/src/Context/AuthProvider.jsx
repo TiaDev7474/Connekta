@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useMemo, } from 'react'
-import {useLocalstorage } from '../hooks/useLocalStorage';
+import { useLocalstorage } from '../hooks/useLocalStorage';
 import { useUserContext } from '../features/authentification/hooks/useUserContext';
 
 
@@ -10,21 +10,15 @@ const  authContextProps = {
 }
 export const Authcontext = createContext(authContextProps)
 
-function AuthProvider({children}) {
-    const { setItem} = useLocalstorage()
+function AuthProvider({ children }) {
+    const login = useCallback((token) => {
+         localStorage.setItem('Token',token)
 
-    const {removeUser } = useUserContext()
-
-    
-   
-    const login = useCallback((response) => {
-         setItem('Token ',JSON.stringify(response.token));
-
-     },[setItem])
+     },[])
      const logout = useCallback((response)=> {
-         removeUser()
+        localStorage.removeItem('User')
         
-     },[removeUser])
+     },[])
 
      const contextValue = useMemo(() => ({
          login,

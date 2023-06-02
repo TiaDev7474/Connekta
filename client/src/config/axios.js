@@ -11,13 +11,17 @@ const request = axios.create({
 console.log(process.env.REACT_APP_BASE_URL)
 
 request.interceptors.request.use(
-    config =>{
+    (config) =>{
         const token = localStorage.getItem('Token')
 
         if(token !== null){
             config.headers["Authorization"] = `Bearer ${token}`
+            console.log( config.headers["Authorization"])
         }
         return config
+    },
+    (error) => {
+        return Promise.reject(error);
     }
 )
 export default request

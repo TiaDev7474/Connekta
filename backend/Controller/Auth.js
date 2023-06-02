@@ -1,34 +1,39 @@
-const jwt = require('json-web-token')
+const jwt = require('jsonwebtoken');
+console.log(jwt)
 const User = require('../Model/User')
 const { findUserByEmail } = require('../utils/auth')
 
 module.exports = {
      loginUser: async (req ,res) =>{
          const {email , password} = req.body
+         console.log(req.body)
          try{
-             await findUserByEmail(email)
-                .then(user =>{
-                    console.log(user)
-                    if(user){
-                        User.comparePassword(password, (err , isMatch)=>{
-                            if(err) return res.status(500).json({error:err})
-                            if(!isMatch) return res.status(401).json({message:"Pair email password not correct"})
-                            res.status(200).josn({
-                                token:jwt.sign(
-                                    {userId: user._id},
-                                     process.env.JWT_STRONG_SECRET,
-                                     {expireIn:'24h'}
+             const user =  await   User.findOne({email:email})  
+             console.log(user)  
+             if (user) {
+                const validity = await user.comparePassword(password);
+                console.log(validity)  
+                if (validity) {
+                  const token = jwt.sign(
+                    { userId: user._id },
+                    process.env.JWT_STRONG_SECRET,
+                    { expiresIn: '24h' }
+                  );
+                  console.log(token);
+                  return res.status(201).json({
+                    token: token,
+                  });
+                }
           
-                                )
-                            }) 
-                        })
-                   }
-                })
-                .catch(err => res.status(500).json({error:err}))
+                return res.status(401).json({ message: "Pair identifiant/password not correct" });
+              } else {
+                return res.status(401).json({ message: "Pair identifiant/password not correct" });
+              }
            
          }
          catch(err){
-            return res.status(500).json({error:err})
+            console.error(err)
+            return res.status(500).json({error: 'An unexpected error occurred.'})
          }
          
      },
