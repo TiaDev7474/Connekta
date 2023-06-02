@@ -9,8 +9,7 @@ const UserSchema = mongoose.Schema({
       },
       email: {
           type:String ,
-          required: true,
-          index:{ unique: true}
+    
       },
       password:{
           type:String
@@ -35,7 +34,7 @@ const UserSchema = mongoose.Schema({
       lockUntil:{
            type:Number
       },
-      profilUrl:{
+      profilURL:{
          type: String
       },
 

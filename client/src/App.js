@@ -11,7 +11,7 @@ import UserLayout from './layout/UserLayout';
 function App() {
     
   return (
-     <div className='min-w-full md:h-screen bg-primaryColor '>
+     <div className='min-w-full  bg-primaryColor '>
          <BrowserRouter>
               <Routes>
                   <Route path='/auth/*' element={<AuthLayout />} />

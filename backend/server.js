@@ -28,6 +28,7 @@ app.use(session({
       store:store
 }))
 //establish session
+app.use(passport.initialize())
 app.use(passport.authenticate('session'))
 app.use(express.json())
 app.use(helmet())

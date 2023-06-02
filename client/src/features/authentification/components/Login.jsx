@@ -49,7 +49,7 @@ const Login = ()=> {
            }
      })
   return (
-     <div className=' flex w-full h-full overflow-y-hidden'>
+     <div className=' flex w-full h-screen'>
           <aside className='hidden md:block md:flex-1'>
               
           </aside>
