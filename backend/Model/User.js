@@ -37,6 +37,10 @@ const UserSchema = mongoose.Schema({
       profilURL:{
          type: String
       },
+      otp:{
+          type:Number,
+        
+      }
 
 }
 )

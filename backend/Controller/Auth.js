@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 console.log(jwt)
 const User = require('../Model/User')
-const { findUserByEmail } = require('../utils/auth')
+const { sendOtpToUser } = require('../Services/nodemailer');
+const { generateOtp } = require('../Services/speakeasy');
 
 module.exports = {
      loginUser: async (req ,res) =>{
@@ -46,12 +47,19 @@ module.exports = {
                             return res.status(401).json({message:'Email already in use'})
             
                         }
+                        
                         const newUser = new User({
                             email:email,
                             password:password
                         })
                         newUser.save()
-                            .then( () => res.status(201).json({message:"Account created sucessfully"}))
+                            .then( async (user) => {
+                                  console.log(user)
+                                   const otp =  await generateOtp()
+                                   console.log(otp)
+                                   await sendOtpToUser(user.email,otp)
+                                 
+                                  res.status(201).json({message:"Account created sucessfully"})})
                             .catch( err => res.status(500).json({error:err}))
                 
                       })

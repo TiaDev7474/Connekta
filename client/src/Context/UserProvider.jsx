@@ -26,7 +26,11 @@ export const UserProvider = ({children}) => {
 
     const updateUser = useCallback( (user) =>{
           localStorage.setItem('User',JSON.stringify(user))
-          setUser(user)
+          setUser(prevstate => ({
+              ...prevstate,
+              ...user
+
+          }))
     },[])
 
     const removeUser = useCallback(() => {

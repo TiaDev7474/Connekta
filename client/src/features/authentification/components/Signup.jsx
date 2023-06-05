@@ -8,6 +8,7 @@ import  password from "../../../assets/password.svg"
 import { signUpUser } from '../utils/authUtlis';
 import InputField from './InputField';
 import SocialMediaLogin from './SocialMediaLogin';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 
@@ -16,6 +17,7 @@ import SocialMediaLogin from './SocialMediaLogin';
 const Signup = () => {
     const navigate = useNavigate()
     const [isLoading ,setIsLoading] = useState(false)
+    const { setEmail } = useAuthContext()
      const formik = useFormik({
           initialValues:{
                email:'',
@@ -40,7 +42,9 @@ const Signup = () => {
                try{
                     const response = await signUpUser(data);
                     if(response.status === 201){
-                         navigate('/auth/login')
+
+                         setEmail(data.email)
+                         navigate('/auth/verify')
                     }
                }catch(err){
                     console.log(err)

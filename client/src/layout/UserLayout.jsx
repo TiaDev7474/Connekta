@@ -2,9 +2,12 @@ import React, { useEffect } from 'react'
 import WithAuth from '../features/authentification/components/WithAuth'
 import { fetchUser } from '../utils/user'
 import { useUserContext } from '../features/authentification/hooks/useUserContext'
+import { useNavigate } from 'react-router-dom'
+
 
 function UserLayout() {
    const { user , updateUser} = useUserContext()
+   const navigate = useNavigate()
     useEffect(() => {
         fetchUser()
           .then(response => {
@@ -18,6 +21,11 @@ function UserLayout() {
               console.log(err)
           })
     },[updateUser])
+   if(user){
+      if(!user.account_verify){
+          navigate('auth/verify')
+      }
+   }
   return (
     <>
        {user && (

@@ -10,7 +10,7 @@ function AuthLayout() {
         <Routes>
              <Route path='login' element={<Login/>}/>
              <Route path='register' element={<Signup/>}/>
-             <Route path='verification' element={<Verification/>}/>
+             <Route path='verify' element={<Verification/>}/>
         </Routes>
     </React.Fragment>
   )

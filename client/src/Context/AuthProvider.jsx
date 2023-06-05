@@ -1,16 +1,31 @@
-import React, { createContext, useCallback, useMemo, } from 'react'
+import React, { createContext, useCallback, useEffect, useMemo, } from 'react'
 import { useLocalstorage } from '../hooks/useLocalStorage';
 import { useUserContext } from '../features/authentification/hooks/useUserContext';
+import { useState } from 'react';
 
 
 
 const  authContextProps = {
+    setEmail:"",
+    email:"",
     login:() => null,
     logout:() => null
 }
 export const Authcontext = createContext(authContextProps)
 
 function AuthProvider({ children }) {
+
+    const [ email , setEmail] = useState("")
+    useEffect(() => {
+        const storedEmail = localStorage.getItem('Email')
+        if(storedEmail){
+          setEmail(storedEmail)
+        }
+    },[])
+    useEffect(() => {
+         localStorage.setItem('Email',email)
+       
+    },[email])
     const login = useCallback((token) => {
          localStorage.setItem('Token',token)
 
@@ -22,8 +37,10 @@ function AuthProvider({ children }) {
 
      const contextValue = useMemo(() => ({
          login,
-         logout
-     }),[login,logout])
+         logout,
+         setEmail,
+         email
+     }),[login,logout,email,setEmail])
   return (
     <Authcontext.Provider value={contextValue}>
          {children}
