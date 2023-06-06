@@ -19,6 +19,13 @@ export const signUpUser = async (userData) => {
 
 }
 
+export const verifyOtp = async(otp,email) => {
+     return await axios.post('/auth/verify',{otp:otp,email:email})
+}
+export const resendCode = async(email) => {
+    return await axios.post('/auth/resendcode',{email:email})
+}
+
 const validateUserInput =  () => {
 
 }

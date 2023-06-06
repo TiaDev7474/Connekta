@@ -2,8 +2,7 @@ import { useFormik } from 'formik'
 import React, { useRef, useState } from 'react'
 
 
-export const InputOtp = ({optLength}) => {
-  const [otp, setOtp] = useState(Array(6).fill(0))
+export const InputOtp = ({setOtp}) => {
   const inputsRef = useRef([])
    const focusNext = (index) => {
          if(index < inputsRef.current.length - 1 ){
@@ -62,7 +61,7 @@ export const InputOtp = ({optLength}) => {
                 key={index}
                 ref={(el) => inputsRef.current[index] = el} 
                 name={`opt${index}`} 
-                autoFocus={index}
+                autoFocus={index === 0}
                 onPaste={(e) => handlleInputPaste(e, index)}
                 maxLength={1}
                 onKeyUp ={(e) => onChangeOtp(e,index)}
