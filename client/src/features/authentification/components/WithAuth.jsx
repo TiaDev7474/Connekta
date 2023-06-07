@@ -6,13 +6,11 @@ const WithAuth = (WrappedComponent) => {
     const  token =  localStorage.getItem('Token');
     const AuthHOC = (props) => {
 
-        console.log(token)
         if (!token) {
           // Redirect to login if token is missing
           return  <Navigate replace to='/auth/login'/>
         
         }
-  
       return <WrappedComponent {...props} />;
     };
   

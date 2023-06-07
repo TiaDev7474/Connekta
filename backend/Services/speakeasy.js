@@ -11,9 +11,9 @@ module.exports = {
      },
      verifyOtp:(otp) => {
          return speakeasy.totp.verify({
-              secret:secret,
+              secret:secret.base32,
               encoding:'base32',
-              token:otp,
+              token:otp.passcode,
               window:30
          })
      }

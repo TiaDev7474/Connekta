@@ -3,8 +3,8 @@ const mongoose = require('mongoose')
 const OtpSchema = mongoose.Schema({
        createdAt:{ 
            type:Date,
-           expires:180,
-           default: new Date(Date.now() + 60 * 4 * 1000)
+           expires:2000,
+           default: Date.now()
 
        },
         passcode:{
@@ -17,7 +17,7 @@ const OtpSchema = mongoose.Schema({
         }
 })
 
-OtpSchema.index({createdAt:1},{ expireAfterSeconds:2400})
+OtpSchema.index({createdAt:1},{ expireAfterSeconds:180}) 
 
 
 module.exports = mongoose.model('Otp',OtpSchema)

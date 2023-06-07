@@ -26,7 +26,7 @@ function AuthProvider({ children }) {
          localStorage.setItem('Email',email)
        
     },[email])
-    const login = useCallback((token) => {
+    const storeCredential = useCallback((token) => {
          localStorage.setItem('Token',token)
 
      },[])
@@ -36,11 +36,11 @@ function AuthProvider({ children }) {
      },[])
 
      const contextValue = useMemo(() => ({
-         login,
+         storeCredential,
          logout,
          setEmail,
          email
-     }),[login,logout,email,setEmail])
+     }),[storeCredential,logout,email,setEmail])
   return (
     <Authcontext.Provider value={contextValue}>
          {children}

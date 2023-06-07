@@ -17,13 +17,18 @@ module.exports = {
                 console.log(validity)  
                 if (validity) {
                   const token = jwt.sign(
-                    { userId: user._id },
-                    process.env.JWT_STRONG_SECRET,
-                    { expiresIn: '24h' }
-                  );
-                  console.log(token);
+                      {
+                        userId: user._id,
+                        isVerified:user.account_verify,
+                      },
+                      process.env.JWT_STRONG_SECRET,
+                      {
+                        expiresIn:'24h'
+                      } 
+                   )
                   return res.status(201).json({
                     token: token,
+                    message:'logged in  succesfully'
                   });
                 }
           
@@ -56,15 +61,23 @@ module.exports = {
                         })
                         newUser.save()
                             .then( async (user) => {
-                                  console.log(user)
                                   sendOtpToUser(user.email,otp)
                                   const newOtp = new Otp({
                                       passcode:otp,
                                       author:user._id
                                   })
-                                  const result = await newOtp.save() 
-                                  console.log(result)
-                                  res.status(201).json({message:"Account created sucessfully"})})
+                                  await newOtp.save() 
+                                  const token = jwt.sign(
+                                    {
+                                      userId: user._id,
+                                      isVerified:user.account_verify,
+                                    },
+                                    process.env.JWT_STRONG_SECRET,
+                                    {
+                                      expiresIn:'24h'
+                                    } 
+                              )
+                                  res.status(201).json({ token: token ,message:"Account created sucessfully"})})
                             .catch( err => res.status(500).json({error:err}))
                 
                       })
@@ -75,15 +88,17 @@ module.exports = {
               console.log(req.userId)
                  Otp.findOne({author:req.userId})
                         .then( async(otp) => {
-                             
+                              console.log(otp.passcode)
                               if(otp){
                                   const isvalid = verifyOtp(otp)
+                                  console.log(isvalid)
                                   if(isvalid){
                                       User.findOneAndUpdate({_id:req.userId},{account_verify:true},{
                                               returnOriginal:false
                                       })
                                               .then( user => {
-                                                   res.status(201).json(user , {message:'Account verifiy'})
+                                                 
+                                                   res.status(201).json({ message:'Account verified successfully'})
                                               })
                                               .catch((err) =>  res.status(500).json({error:err}))
                                     
@@ -115,7 +130,7 @@ module.exports = {
                     })
                       newOtp.save()
                              .then(() => res.status(200).json({message:'Otp send succesfully'}))
-                              .catch(err =>  res.status(500).json({error:err,message:'Unexpected error occured'}))
+                             .catch(err =>  res.status(500).json({error:err,message:'Unexpected error occured'}))
                     }else{
                         const updates = {
                                passcode:opt,

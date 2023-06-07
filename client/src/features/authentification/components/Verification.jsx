@@ -3,16 +3,19 @@ import message from '../../../assets/message.jpg'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { InputOtp } from './InputOtp'
 import { verifyOtp,resendCode } from '../utils/authUtlis'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 function Verification() {
       const { email } = useAuthContext()
+      const navigate = useNavigate()
       const [otp, setOtp] = useState(Array(6).fill(0))
       const handleResendCode= async (e) =>{
           e.preventDefault()
           try{
               
                const response = await resendCode(email)
-               console.log(response)
+               if(response.status === 200){
+                    console.log(response.status)
+               }
 
           }catch(error){
               if(error.response){
@@ -26,7 +29,9 @@ function Verification() {
             try{
                 
                  const response = await verifyOtp(parseInt(otp.join('')),email)
-                 console.log(response)
+                 if(response.status === 201){
+                     navigate('/auth/login')
+               }
 
             }catch(error){
                 if(error.response){

@@ -17,7 +17,7 @@ import { useAuthContext } from '../hooks/useAuthContext';
 const Signup = () => {
     const navigate = useNavigate()
     const [isLoading ,setIsLoading] = useState(false)
-    const { setEmail } = useAuthContext()
+    const { setEmail, storeCredential } = useAuthContext()
      const formik = useFormik({
           initialValues:{
                email:'',
@@ -44,6 +44,7 @@ const Signup = () => {
                     if(response.status === 201){
 
                          setEmail(data.email)
+                         storeCredential(response.data.token)
                          navigate('/auth/verify')
                     }
                }catch(err){

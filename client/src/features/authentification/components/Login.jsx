@@ -14,7 +14,7 @@ import { useAuthContext } from '../../authentification/hooks/useAuthContext'
 const Login = ()=> {
      const [isloading, setIsloading] = useState(false)
      const { setItem } = useLocalstorage()
-     const { login } = useAuthContext()
+     const { storeCredential } = useAuthContext()
      const navigate = useNavigate()
      const formik = useFormik({
            initialValues:{
@@ -36,7 +36,7 @@ const Login = ()=> {
                     
                     if(response.status === 201){
      
-                         await login(response.data.token)
+                         await storeCredential(response.data.token)
 
                          navigate('/')
                     }     
@@ -45,10 +45,7 @@ const Login = ()=> {
                       setIsloading(false)
                  }finally{
                       setIsloading(false)
-                 }
-
-                         
-               
+                 }  
            }
      })
   return (

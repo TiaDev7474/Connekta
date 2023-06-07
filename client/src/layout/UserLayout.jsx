@@ -11,21 +11,17 @@ function UserLayout() {
     useEffect(() => {
         fetchUser()
           .then(response => {
-              
+                console.log(response.status)
                 if(response.status === 200){
-                  console.log(response.data)
                    updateUser(response.data)
-                }  
+                }
           }) 
           .catch(err => {
-              console.log(err)
+               if(err.response.status === 401){
+                  navigate('/auth/verify')
+               }
           })
-    },[updateUser])
-   if(user){
-      if(!user.account_verify){
-          navigate('auth/verify')
-      }
-   }
+    },[updateUser,navigate])
   return (
     <>
        {user && (

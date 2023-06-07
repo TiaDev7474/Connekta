@@ -1,7 +1,7 @@
 const { fetchUser } = require('../Controller/User')
-const { authMiddleware } = require('../Middleware/Auth')
+const { authEmailVerify } = require('../Middleware/Auth')
 
 const router = require('express').Router()
 
-router.get('/', authMiddleware,fetchUser )
+router.get('/', authEmailVerify,fetchUser)
 module.exports = router
