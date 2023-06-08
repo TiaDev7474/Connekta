@@ -6,16 +6,22 @@ import 'tailwindcss/tailwind.css';
 import App from './App';
 import AuthProvider from './Context/AuthProvider';
 import { UserProvider } from './Context/UserProvider';
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
+const queryClient = new QueryClient()
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <UserProvider>
-        <AuthProvider >
-            <App />
-        </AuthProvider>
-    </UserProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+          <AuthProvider>
+              <App />
+          </AuthProvider>
+      </UserProvider>
+      <ReactQueryDevtools initialIsOpen={false}/>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

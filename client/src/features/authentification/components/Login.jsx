@@ -30,6 +30,7 @@ const Login = ()=> {
                  const { toRemember , ...data } = values
                  console.log(values,'login credentials')
                  await setItem('Remember',JSON.stringify({toRemember}))
+                
                  setIsloading(true)
                  try{
                     const response = await loginUser(data)
@@ -37,7 +38,7 @@ const Login = ()=> {
                     if(response.status === 201){
      
                          await storeCredential(response.data.token)
-
+                         await setItem('Email',data.email)
                          navigate('/')
                     }     
                  }catch(err){
