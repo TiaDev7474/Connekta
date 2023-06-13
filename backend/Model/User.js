@@ -4,17 +4,12 @@ const bcrypt = require("bcrypt")
 require('dotenv').config();
 
 const UserSchema = mongoose.Schema({
-      username:{ 
+    username:{ type:String },
+    email: { type:String ,},
+    password:{
           type:String
-      },
-      email: {
-          type:String ,
-    
-      },
-      password:{
-          type:String
-      },
-      federated_credentials:{
+    },
+    federated_credentials:{
          provider:{
              type:String
          },
@@ -22,30 +17,35 @@ const UserSchema = mongoose.Schema({
              type:String
          }
       },
-      loginAttempt:{
-           type:Number ,
-           required:true,
-           default: 0
-      },
-      account_verify:{
-          type: Boolean,
-          default:false,
-      },
-      lockUntil:{
-           type:Number
-      },
-      profilURL:{
-         type: String
-      },
-      otp:{
-          type:Number,
-        
-      }
-
+    account_verify:{
+        type: Boolean,
+        default:false,
+    },
+    friends:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    }],
+    profilURL:{
+       type: String
+    },
+    friends:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    }],
+},
+{
+    timestamps: true ,
+    toObject:true,
+    toJSON:true
 }
 )
 
-
+UserSchema.virtual('conversation', {
+    ref:'Conversation',
+    localField:'_id',
+    foreignField:'members'
+})
+//todo: implement lockout features
 
 UserSchema.virtual('isLocked').get(function(){
     //check for lockuntil timestamp

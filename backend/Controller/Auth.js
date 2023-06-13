@@ -28,7 +28,7 @@ module.exports = {
                    )
                   return res.status(201).json({
                     token: token,
-                    message:'logged in  succesfully'
+                    message:'logged in succesfully'
                   });
                 }
           
