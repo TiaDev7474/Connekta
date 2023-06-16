@@ -9,11 +9,7 @@ export const MainNavigation = () => {
                   <LinkItem key={index} item={item}/>
              )
          })}
-         <span>
-             <h3>
-
-             </h3>
-         </span>
+        
     </div>
   )
 }

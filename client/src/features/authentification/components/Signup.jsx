@@ -59,14 +59,14 @@ const Signup = () => {
     
    
 return (
-    <div className='bg-white w-full h-full flex justify-center   overflow-y-hidden'>
-          <div className='max-w-[600px]  flex-1  m-auto  px-2  md:px-5'>
+    <div className=' w-full bg-white h-[100%] flex justify-center '>
+          <div className='max-w-[600px] py-8  md:py-24 md:px-5'>
                <span className='flex justify-center '>
                     <img src={logo} alt="logo of connekta" />
                </span>
                <h2 className='h3 text-center text-textdark '>Create an account</h2>
                <p className=' text-center textbody py-1 px-2 '>Start a great experience wtih people around the world and expend your network</p>
-          <form 
+              <form 
                     onSubmit={formik.handleSubmit}
                     className='max-w-[550px] py-5  px-4 m-auto '
                >

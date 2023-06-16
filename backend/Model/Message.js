@@ -1,18 +1,17 @@
 const {model, Schema} = require('mongoose');
 
 const messageSchema = new Schema({
-    senderId:{
+    sender:{
         type: Schema.Types.ObjectId,
         ref:'User'
     },
-    receiverID:[{
-        type: Schema.Types.ObjectId,
-        ref:'User'
-    }],
+    destinationModel:{
+         type:String,
+         enum:[ 'PrivateConversation']
+    }, 
     conversationID:{
         type:Schema.Types.ObjectId,
-        ref:'Conversation',
-        
+        refPath:'Conversation',      
     },
 //todo: allow a other file type as content of a message
     content:{

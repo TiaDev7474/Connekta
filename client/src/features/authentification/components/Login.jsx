@@ -36,7 +36,6 @@ const Login = ()=> {
                     const response = await loginUser(data)
                     
                     if(response.status === 201){
-     
                          await storeCredential(response.data.token)
                          await setItem('Email',data.email)
                          navigate('/')

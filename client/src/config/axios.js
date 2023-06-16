@@ -8,7 +8,7 @@ const request = axios.create({
     }
 }) 
 
-console.log(process.env.REACT_APP_BASE_URL)
+
 
 request.interceptors.request.use(
     (config) =>{
@@ -23,5 +23,5 @@ request.interceptors.request.use(
     (error) => {
         return Promise.reject(error);
     }
-)
+) 
 export default request

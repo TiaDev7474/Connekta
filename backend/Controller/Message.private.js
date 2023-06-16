@@ -1,25 +1,26 @@
 const ConversationPrivate = require("../Model/Conversation.private")
 
 async function fetchALlUserConversation(userId,limit){
-     return  await ConversationPrivate.find({ members:{ $in:[userId]}})
+     return  await ConversationPrivate
+                    .find({ members:{ $in:[userId]}})
                     .populate({
-                        path:'members',
+                         path:'members',
                     })
                     .populate({
-                        path:'messages',
-                        options:{
-                        sort:{ createdAt: -1},
-                        limit:1
-                        },
-                        populate:{
-                            path:'sender',
-                        },
-
-                    })
-                    .limit(limit)
+                       path:'messages',
+                       options:{
+                           sort:{ createdAt: -1},
+                           limit:1
+                       },
+                       populate:{
+                           path:'sender',
+                       },
+                     })
+                    .lean()
+                   
 }
 module.exports = {
-      ListAll: async (req, res , next ) => {
+      ListAlldiscussion: async (req, res , next ) => {
           const userId = req.userId
           const limit = req.params
           try {
@@ -28,5 +29,12 @@ module.exports = {
           }catch(err){
                res.status(500).json({message:'Unexpected error occured',info: err})
           }     
-    }
+      },
+      getOne: async (req, res, next ) => {
+         const userId = req.userId;
+         const { conversationId } = req.params;
+      },
+      sendFriendRequest:(req, res,next) => {
+           const { destiantionId } = req.body;   
+      }
 }

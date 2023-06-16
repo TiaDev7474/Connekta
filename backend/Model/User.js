@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema({
          profileID:{
              type:String
          }
-      },
+    },
     account_verify:{
         type: Boolean,
         default:false,
@@ -28,63 +28,63 @@ const UserSchema = mongoose.Schema({
     profilURL:{
        type: String
     },
-    friends:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
-    }],
 },
 {
     timestamps: true ,
-    toObject:true,
-    toJSON:true
+    // toObject:true,
+    // toJSON:true
 }
 )
-
 UserSchema.virtual('conversation', {
     ref:'Conversation',
     localField:'_id',
     foreignField:'members'
 })
-//todo: implement lockout features
 
+//get all user's FriendRequest
+UserSchema.virtual('friendRequest',{
+     ref:'Request',
+     localField:'_id',
+     foreignField:'author'
+}),
+
+
+//todo: implement lockout features
 UserSchema.virtual('isLocked').get(function(){
     //check for lockuntil timestamp
     return !!(this.lockUntil && this.lockUntil > Date.now())
 })
-
-//hash the password before saving it on db
+// hash the password before saving it on db
 UserSchema.pre('save',async function(next){
     let user = this;
     // only hash password if it has modified or new
-    if(!user.isModified('password') || !user.isNew ) {
+    if(!(user.isModified('password')) || !(user.isNew) ) {
+       
         return next();
     }
     //generate a salt
     try{
-        
         const salt = await bcrypt.genSalt(10)
+     
         //hash the bpassword 
         const hashedPassword = await bcrypt.hash(user.password,salt)
+       
         user.password = hashedPassword;
         next()
         // return this.save(next)
     }
     catch(err){
+       
          next(err)
     }
 });
 
-UserSchema.methods.comparePassword =  function(cadidatePassword){
+UserSchema.methods.comparePassword =  function(candidatePassword){
     return new Promise((resolve, reject) => {
-        bcrypt.compare(cadidatePassword, this.password, (err , isMatch)=>{
+        bcrypt.compare(candidatePassword, this.password, (err , isMatch)=>{
             if(err) return reject(err)
             resolve(isMatch)
        })
-    })
-    
-   
-    
+    })   
 }
-
-
-module.exports = mongoose.model("User", UserSchema)
+module.exports = mongoose.model("User", UserSchema);

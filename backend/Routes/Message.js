@@ -1,8 +1,8 @@
-const privateConversation = require('../Controller/Message.private')
-const { authMiddleware } = require('../Middleware/Auth')
+const privateConversation = require('../Controller/Message.private');
+const { authMiddleware } = require('../Middleware/Auth');
 
-const router = require('express').Router()
+const router = require('express').Router();
 
-router.get('/',authMiddleware, privateConversation.ListAll)
+router.get('/',authMiddleware, privateConversation.ListAlldiscussion);
 
-module.exports = router
+module.exports = router;

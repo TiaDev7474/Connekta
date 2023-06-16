@@ -3,7 +3,6 @@
 const getNameInitial= (name) => {
       let initials;
       const nameSplit = name.split(' ');
-      console.log(nameSplit)
       const nameLength = nameSplit.length;
       if(nameLength > 1 ){
           initials = nameSplit[0].substring(0,1) + nameSplit[nameLength - 1].substring(0,1)
@@ -29,11 +28,11 @@ const getRandomColor = () => {
 
 
 
-const  createPdpFromInitials = (name , size , color) => {
+const  createPdpFromInitials = (name , size ) => {
     if (name === null ) return ;
 
     name = getNameInitial(name)
-    color = getRandomColor()
+    const color = getRandomColor()
     const canvas = document.createElement('canvas')
 
     const context = canvas.getContext('2d');
@@ -42,7 +41,7 @@ const  createPdpFromInitials = (name , size , color) => {
     context.fillStyle ="#fffff"
     context.fillRect(0,0,size,size)
 
-    context.fillStyle =`${color}50`
+    context.fillStyle =`${color}90`
     context.fillRect(0,0,size,size)
 
     context.fillStyle = color;

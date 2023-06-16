@@ -1,5 +1,5 @@
-const speakeasy = require('speakeasy')
-const secret = speakeasy.generateSecret({length:20})
+const speakeasy = require('speakeasy');
+const secret = speakeasy.generateSecret({length:20});
 module.exports = {
      generateOtp: async() => {
         //generate a password using the secret 
@@ -17,5 +17,4 @@ module.exports = {
               window:30
          })
      }
-
-}
+};

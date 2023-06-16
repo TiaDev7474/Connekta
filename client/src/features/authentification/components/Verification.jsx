@@ -42,7 +42,7 @@ function Verification() {
       }
   return (
     <div className='w-full h-full flex  justify-center  bg-white'>
-         <div className="max-w-[650px] flex flex-col items-center pt-32 px-9">
+         <div className="max-w-[650px] flex flex-col items-center pt-11 md:pt-32 px-9">
 
               <span>
                   <img src={message} alt='envelope illustration' width={300} height={300}/>

@@ -9,7 +9,7 @@ const transporter =  nodemailer.createTransport({
         user:process.env.EMAIL_ADDRESS,
         pass:process.env.GENERATED_PASSWORD
     }
-})
+});
 
 module.exports = {
      sendOtpToUser:async (to,otp) => {
@@ -30,4 +30,4 @@ module.exports = {
             }
          })
      }
-}
+};

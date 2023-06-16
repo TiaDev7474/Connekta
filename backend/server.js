@@ -28,21 +28,22 @@ app.use(session({
       store:store
 }))
 //establish session
-app.use(passport.initialize())
-app.use(passport.authenticate('session'))
-app.use(express.json())
-app.use(helmet())
+app.use(passport.initialize());
+app.use(passport.authenticate('session'));
+app.use(express.json());
+app.use(helmet());
 app.use(cors({
       origin:'http://localhost:3000',
       methods:['GET','POST','PUT','UPDATE']
-}))
+}));
 
 //Routing logic
 
-app.use('/auth',require('./Routes/Auth'))
-app.use('/api/user', require('./Routes/User'))
-app.use('/api/messages',require('./Routes/Message'))
+app.use('/auth',require('./Routes/Auth'));
+app.use('/api/user', require('./Routes/User'));
+app.use('/api/messages',require('./Routes/Message'));
+app.use('/api/request',require('./Routes/Request'))
 
 app.listen(port,()=>{
       console.log(`server running on port ${port}`)
-})
+});

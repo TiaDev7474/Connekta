@@ -1,14 +1,15 @@
 import React from 'react'
-import logo from '../../assets/logo_cnkt.svg'
+import logo from '../../assets/logo_cnk_dark.svg'
 import notification from '../../assets/notification.svg'
-import Avatar from '../../features/Messages/components/Avatar'
+import Avatar from '../Avatar/Avatar'
 import { MessageUtils } from '../../features/Messages/utils/utils'
 
-const Header = (user) => {
+const Header = ({user}) => {
+   
   return (
     <div className=' h-[8vh]  flex items-center justify-between'>
          <span className=" ">
-              <img src={logo} alt='logo ' width={200} height={100}  />
+              <img src={logo} alt='logo ' width={170} height={150}  />
 
          </span>
          <div className='flex items-center  gap-8 mr-14'>
@@ -16,11 +17,12 @@ const Header = (user) => {
                  <img 
                     src={notification}  
                     alt='notification icon' 
-                />
+              />
              </div>
              <Avatar  
-                  img={user.photoProfil ?  user.photoProfil : MessageUtils.createPdpFromInitials('Riry nomenjanahary',60)  }
-             
+                  img={user.photoProfil ?  user.photoProfil : MessageUtils.createPdpFromInitials("Riry Nomenjanahary",50)}
+                  size={14}
+                
              />
          </div>
     </div>

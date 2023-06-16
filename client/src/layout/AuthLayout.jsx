@@ -10,13 +10,13 @@ function AuthLayout() {
    const user = query.getQueriesData(['userProfile'])
    console.log(user)
   return (
-    <React.Fragment>
+    <div className='h-[100vh] w-full overflow-y-hidden flex justify-center items-center'>
         <Routes>
              <Route path='login' element={<Login/>}/>
              <Route path='register' element={<Signup/>}/>
              <Route path='verify' element={<Verification/>}/>
         </Routes>
-    </React.Fragment>
+    </div>
   )
 }
 

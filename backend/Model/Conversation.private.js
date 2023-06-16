@@ -16,10 +16,14 @@ const PrivateConversationSchema = new Schema({
 },
 )
 
-PrivateConversationSchema.virtuals('messages',{
+PrivateConversationSchema.virtual('messages',{
     ref:"Message",
     localField: '_id',
     foreignField:'conversationID',
+    justOne:false
 }); 
+
+
+
 
 module.exports = model('PrivateConversation', PrivateConversationSchema) 
