@@ -11,7 +11,7 @@ const messageSchema = new Schema({
     }, 
     conversationID:{
         type:Schema.Types.ObjectId,
-        refPath:'Conversation',      
+        refPath: destinationModel,      
     },
 //todo: allow a other file type as content of a message
     content:{
