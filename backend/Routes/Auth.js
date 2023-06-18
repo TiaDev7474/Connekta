@@ -75,7 +75,7 @@ router.get('/redirect/facebook',passport.authenticate('facebook',{
 //other routes
 router.post('/login',authController.loginUser);
 router.post('/register',authController.register);
-router.post('/verify',authMiddleware,authController.verifyOtp);
+router.patch('/verify',authMiddleware,authController.verifyOtp);
 router.post('/resendcode',authMiddleware,authController.resendOtp);
 
 module.exports = router;

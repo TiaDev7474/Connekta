@@ -3,42 +3,44 @@ const User = require('../Model/User')
 const { sendOtpToUser } = require('../Services/nodemailer');
 const { generateOtp, verifyOtp } = require('../Services/speakeasy');
 const Otp = require('../Model/Otp');
+const CustomError = require('../utils/CustomError');
 
 module.exports = {
      loginUser: async (req ,res) =>{
          const {email , password} = req.body
-        
          try{
-             const user =  await  User.findOne({email:email}) 
-             if (user) {
-                const validity = await user.comparePassword(password);
-                console.log(validity)  
-                if (validity) {
-                  const token = jwt.sign(
-                      {
-                        userId: user._id,
-                        isVerified:user.account_verify,
-                      },
-                      process.env.JWT_STRONG_SECRET,
-                      {
-                        expiresIn:'24h'
-                      } 
-                   )
-                  return res.status(201).json({
-                      token: token,
-                      userId:user._id,
-                      message:'logged in succesfully'
-                  });
-                }
-          
-                return res.status(401).json({ message: "Pair identifiant/password not correct" });
-              } else {
-                return res.status(401).json({ message: "Pair identifiant/password not correct" });
+              const user =  await  User.findOne({email:email}) 
+              if(!user){
+                    const error = new CustomError('User not found',404);
+                    next(error)
               }
-           
+              const validity = await user.comparePassword(password);
+              if(!validity){
+                  const error = new CustomError('Pair identifiant/password not correct',401);
+                  next(error)
+              }
+        
+              const token = jwt.sign(
+                  {
+                    userId: user._id,
+                    isVerified:user.account_verify,
+                  },
+                  process.env.JWT_STRONG_SECRET,
+                  {
+                    expiresIn:'24h'
+                  } 
+              )
+              res.status(201).json({
+                  token: token,
+                  userId:user._id,
+                  message:'logged in succesfully'
+              });
          }
          catch(err){
-            return res.status(500).json({message: 'An unexpected error occurred.', error:err})
+              res.status(500).json({
+                  status:'error',
+                  message: err.message, 
+              })
          }
          
      },
@@ -46,131 +48,133 @@ module.exports = {
           const { email , password } = req.body;
           try{
               const user = await User.findOne({email:email})
-              if(user)  return res.status(401).json({message:'Email already in use'})
+              if(user){
+                  return res.status(401).json({message:'Email already in use'})
+              }  
               const  newUser = new User({
                     email: email,
                     password:password
               })
               const userDoc = await newUser.save()
-             
-              if(userDoc){
-                  const otp = await generateOtp()
-                  
-                  const newOtp = new Otp({
-                          passcode: otp,
-                          author:userDoc._id
-                  })
-                
-                  const otpDoc = await newOtp.save()
-                  
-                  await sendOtpToUser(userDoc.email,otp)
-                  const token = jwt.sign(
-                      {
-                        userId: userDoc._id,
-                        isVerified:userDoc.account_verify,
-                      },
-                      process.env.JWT_STRONG_SECRET,
-                      {
-                        expiresIn:'24h'
-                      } 
-                  )
-                return  res.status(201).json({ token: token ,message:"Account created sucessfully"})
-            }
+              if(!userDoc){
+                   const mongodbError = new CustomError('Unexpected error occured from mongodb', 500)
+                   next(mongodbError)
+              }
+          
+              const otp = await generateOtp()
+              
+              const newOtp = new Otp({
+                      passcode: otp,
+                      author:userDoc._id
+              })
+            
+              const otpDoc = await newOtp.save()
+              if(!otpDoc){
+                  const mongodbError = new CustomError('Unexpected error occured from mongodb', 500)
+                  next(mongodbError)
+              }
+              await sendOtpToUser(userDoc.email,otp)
+              const token = jwt.sign(
+                  {
+                    userId: userDoc._id,
+                    isVerified:userDoc.account_verify,
+                  },
+                  process.env.JWT_STRONG_SECRET,
+                  {
+                    expiresIn:'24h'
+                  } 
+              )
+              const { password , ...data} =   userDoc
+              res.status(201).json({ 
+                    status:'succes',
+                    data:{
+                      token: token ,
+                      currentUser: data
+                    },
+                    message:"Account created sucessfully"
+              })
+        
               
           }catch(err){
-              return  res.status(500).json({message:'Unexpected error occured', info:err})
+              return  res.status(500).json({ 
+                 status:'error',
+                 message: error.message,
+              })
           }
      },
-    //  register:async (req , res ,next) => {
-    //     const {email, password } = req.body;
-    //         await User.findOne({email:email})
-    //                 .then( async( user) => {
-    //                     if(user){
-    //                         return res.status(401).json({message:'Email already in use'})
-    //                     }
-    //                     const otp =  await generateOtp()
-    //                     const newUser = new User({
-    //                         email:email,
-    //                         password:password
-    //                     })
-                        
-    //                     await newUser.save()
-    //                         .then( async (user) => {
-    //                           console.log(user)
-    //                               sendOtpToUser(user.email,otp)
-    //                               const newOtp = new Otp({
-    //                                   passcode:otp,
-    //                                   author:user._id
-    //                               })
-    //                               // await newOtp.save() 
-    //                               const token = jwt.sign(
-    //                                 {
-    //                                   userId: user._id,
-    //                                   isVerified:user.account_verify,
-    //                                 },
-    //                                 process.env.JWT_STRONG_SECRET,
-    //                                 {
-    //                                   expiresIn:'24h'
-    //                                 } 
-    //                           )
-    //                             return   res.status(201).json({ token: token ,message:"Account created sucessfully"})})
-    //                         .catch( err => console.log(err))
-    //                   })
-    //                 .catch(err =>res.status(500).json({message:'Unexpected error occured'}))
-    //     },
+
       verifyOtp:async(req ,res) =>{
-              console.log(req.userId)
-                 Otp.findOne({author:req.userId})
-                        .then( async(otp) => {
-                              console.log(otp.passcode)
-                              if(otp){
-                                  const isvalid = verifyOtp(otp)
-                                  console.log(isvalid)
-                                  if(isvalid){
-                                      User.findOneAndUpdate({_id:req.userId},{account_verify:true},{
-                                              returnOriginal:false
-                                      })
-                                          .then( user => {
-                                             
-                                               res.status(201).json({ message:'Account verified successfully'})
-                                          })
-                                          .catch((err) =>  res.status(500).json({error:err}))      
-                                  }else{
-                                      return res.status(401).json({message:'Otp code incorrect or expired'})
-                                  }
-                              }
-                              else{
-                                return res.status(401).json({message:'Otp code expired'})
-                            }
-                        })
-                        .catch(err => res.status(500).json({error:err}));  
-    },
-    resendOtp: async (req, res) => {
-             const { email } = req.body
+        try{
+            const otp = await Otp.findOne({ author:req.userId })
+            if(!otp){
+              const error = new CustomError(`Otp with id : ${ req.userId }not found or expired`,404);
+              next(error)
+            }
+            const isValid = verifyOtp(otp)
+            if(!isValid){
+              const error = new CustomError(`Not valid Otp `,401);
+              next(error)
+            }
+            const user =   User.findOneAndUpdate({_id:req.userId},{account_verify:true},{ new: true})
+            if(!user){
+              if(!user){
+                const error = new CustomError('User not found',404);
+                next(error)
+              }
+            }
+            res.status(201).json({ 
+               status:'succes',
+               message:'Account verified successfully'
+            })
+        }catch(err){
+            res.status(500).json({
+                status:'error',
+                message: err.message
+            })
+        }
+     },
+      resendOtp: async (req, res) => {
+        try{
+             const { email } = req.body;
              const otp =  await generateOtp()
-             
-             Otp.findOne({ author:req.userId})
-                .then(oldOtp => {
-                    if(!oldOtp ){
-                      sendOtpToUser(email,otp)
-                      const newOtp = new Otp({
-                        passcode:otp,
-                        author:req.userId
-                    })
-                      newOtp.save()
-                             .then(() => res.status(200).json({message:'Otp send succesfully'}))
-                             .catch(err =>  res.status(500).json({error:err,message:'Unexpected error occured'}))
-                    }else{
-                        const updates = {
-                               passcode:opt,
-                               createdAt: new Date(Date.now() + 60 * 4 * 1000)
-                        }
-                        Otp.findOneAndUpdate({ author:req.userId},updates,{ returnOriginal:false})
-                              .then(() => res.status(200).json({message:'Otp updated succesfully'}))
-                              .catch(err =>  res.status(500).json({error:err,message:'Unexpected error occured'}))
-                    }
-                })
-                .catch(err => res.status(500).json({error:err}))
+             const isOtpExist =  Otp.findOne({ author:req.userId})
+             if(isOtpExist){
+                const updates = {
+                    passcode:opt,
+                    createdAt: new Date(Date.now() + 60 * 4 * 1000)
+                  }
+                const otpUpdated = Otp.findOneAndUpdate({ author:req.userId},updates,{ returnOriginal:false})
+                if(!otpUpdated){
+                      const error = new CustomError('Otp to update Not found', 404)
+                      next(error)
+                 }
+                sendOtpToUser(email,otpUpdated.passcode)
+                return  res.status(200).json({
+                     status:'success',
+                     message:'Otp send succesfully'
+                 })
+             }
+             const newOtp = new Otp({
+              passcode:otp,
+              author:req.userId
+             })
+              const savedOtp = newOtp.save()
+              if(!savedOtp){
+                  const mongodbError = new CustomError('Unexpected error occured from mongodb', 500)
+                  next(mongodbError)
+              }
+              sendOtpToUser(email,savedOtp.passcode)
+              res.status(200).json({
+                  status:'success',
+                  message:'Otp send succesfully'
+              })
+
+        }catch{
+              res.status(500).json({
+                status:'error',
+                message: err.message
+              })
+        }
     },
     // refreshToken: async (req , res) => {  // } 
 //todo: implement refresh token 

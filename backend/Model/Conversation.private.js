@@ -8,6 +8,7 @@ const PrivateConversationSchema = new Schema({
             type:String
         }     
     }],
+    
 },
 { 
     timestamps: true ,

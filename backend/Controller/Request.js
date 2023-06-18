@@ -12,8 +12,6 @@ module.exports = {
                 const  request = await Request.findById(requestId)
                 
                  if(!request) return res.status(404).json({status:404, message:'FriendRequest not found'})
-                 console.log(request.destinationID)
-                 console.log(req.userId)
                  if(request.destinationID == req.userId){
                        await Request.findByIdAndUpdate(requestId,{status:'approved'},{ new:true})
                        const newConversation = new ConversationPrivate({

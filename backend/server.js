@@ -6,7 +6,7 @@ const cors = require('cors');
 const { connectToDatabase } = require('./config/db');
 const passport = require('passport');
 const app = express();
-
+const globalErrorHandler = require('./Controller/errorController')
 require('dotenv').config();
 const port = 8000 | process.env.PORT
 
@@ -37,12 +37,17 @@ app.use(cors({
       methods:['GET','POST','PUT','UPDATE']
 }));
 
+//errorHandler
+app.use(globalErrorHandler)
+
 //Routing logic
 
 app.use('/auth',require('./Routes/Auth'));
 app.use('/api/user', require('./Routes/User'));
 app.use('/api/messages',require('./Routes/Message'));
 app.use('/api/request',require('./Routes/Request'))
+
+app.get('*')
 
 app.listen(port,()=>{
       console.log(`server running on port ${port}`)

@@ -13,7 +13,6 @@ const transporter =  nodemailer.createTransport({
 
 module.exports = {
      sendOtpToUser:async (to,otp) => {
-        
         console.log('here inside otp') 
          const mailOptions = {
              from:'nomenjanaharyriry@gmail.com',
