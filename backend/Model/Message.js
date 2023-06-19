@@ -11,7 +11,7 @@ const messageSchema = new Schema({
     }, 
     conversationID:{
         type:Schema.Types.ObjectId,
-        refPath: destinationModel,      
+        refPath: 'destinationModel',      
     },
 //todo: allow a other file type as content of a message
     content:{
@@ -25,11 +25,21 @@ const messageSchema = new Schema({
             type:String,
         },
     },
+    reactions:[{
+        author:{
+            type:Schema.Types.ObjectId,
+            ref:'User'
+        },
+        type:{
+            type:String,
+            enum:['thumb','love','mdr']
+        }
+    }],
 //todo: allow message to have reactions historique
     readBy:[{
         type: Schema.Types.ObjectId,
         ref:'User'
-    }]
+    }],
 },
    { timestamps: true }
 )

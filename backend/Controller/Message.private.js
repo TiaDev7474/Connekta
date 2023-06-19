@@ -23,7 +23,7 @@ async function fetchALlUserConversation(userId,limit){
                    
 }
 module.exports = {
-      ListAlldiscussion: async (req, res , next ) => {
+     ListAlldiscussion: async (req, res , next ) => {
           const userId = req.userId
           const limit = req.params
           try {
@@ -35,22 +35,24 @@ module.exports = {
       },
       createOne: async (req, res, next ) => {
          const userId = req.userId;
-         const { conversationId } = req.params;
-         const text = req.body
+         const { conversationID } = req.params;
+        
+         const { text }= req.body
+        
          try{
-              if(!isValidObjectId(conversationId)){
-                    const idError = new CustomError(`Id: ${conversationId}  not valid `,401)
-                    next(error)
+              if(!isValidObjectId(conversationID)){
+                    const idError = new CustomError(`Id: ${conversationID}  not valid `,401)
+                    return next(idError)
               }
-              const conversation = await ConversationPrivate.findById(conversationId)
+              const conversation = await ConversationPrivate.findById(conversationID)
               if(!conversation){
                     const notFoundError = new CustomError('Conversation not found',404)
-                    next(notFoundError)
+                   return  next(notFoundError)
               }
               const isAuthorizedMember = conversation.members.indexOf(userId) !== -1
               if(!isAuthorizedMember){
                 const notAuthorizedError = new CustomError(`User not authorized to do such action `,401)
-                next(notAuthorizedError)
+                 return next(notAuthorizedError)
               }
               const newMessage = new Message({
                   sender: userId,
@@ -58,10 +60,10 @@ module.exports = {
                      text:text
                   },
                   destinationModel:'PrivateConversation',
-                  conversationID:conversationId,
+                  conversationID:conversationID,
               })
               const newMessageSaved = await newMessage.save()
-              res.status(201).json({
+               return res.status(201).json({
                   status:'success',
                   data:{
                       message: newMessageSaved
@@ -69,11 +71,103 @@ module.exports = {
                   message:'Message created successfully'
               })
          }catch(err){
-              res.status(500).json({
+             return res.status(500).json({
                   status:'error',
                   message:'Unexpected error occured',
                   errorInfo: err.message
               })
          }
+      },
+      deleteOne : async (req , res , next) => {
+            const { messageID } = req.params;
+            try {
+                if(!isValidObjectId(messageID)){
+                    const idError = new CustomError(`Id: ${conversationID}  not valid `,401)
+                    return next(idError)
+                }
+                const message = await Message.findById(messageID)
+                if(!message){
+                    const notFoundError = new CustomError('Conversation not found',404)
+                    return  next(notFoundError)
+                }
+                if(message.sender == req.userId){
+                     const deletedMessage = await Message.deleteOne({_id:messageID})
+                     if(deletedMessage){
+                         return res.status(204).json({
+                              status:'success',
+                              message:'Message deleted successfully'    
+
+                         })
+                     }
+                      
+                }else{
+                    const notAuthorizedError = new CustomError(`User not authorized to do such action `,401)
+                     return next(notAuthorizedError)
+                }
+            }catch(err){
+                return res.status(500).json({
+                    status:'error',
+                    message:'Unexpected error occured',
+                    errorInfo: err.message
+                })
+               
+            }
+      },
+      addReaction: async (req, res , next) => {
+            const { messageID } = req.params;
+            const { reactionType } = req.body;
+         
+            try{
+                if(!isValidObjectId(messageID)){
+                    const idError = new CustomError(`Id: ${messageID}  not valid `,401)
+                    return next(idError)
+                }
+                let filter = { _id: messageID}
+                let update = {}
+                
+                const option = {
+                     new: true 
+                }
+               
+                const message = await Message.findOne(filter)
+                if(!message){
+                    const notFoundError = new CustomError('Conversation not found',404)
+                    return  next(notFoundError)
+                }
+               
+                const isUserReactedToMessage =  message.reactions.some( reaction=> reaction.author == req.userId)
+                console.log(isUserReactedToMessage)
+               if(isUserReactedToMessage){
+                   filter = {...filter , 'reactions.author':req.userId}
+                   update.$set = {'reactions.$.type':reactionType}
+               }else{
+                    update.$push={
+                        reactions:{
+                            author:req.userId,
+                            type: reactionType
+                        }
+                   }
+               }
+
+                const updatedMessage = await Message.findOneAndUpdate(filter, update, option);
+                console.log(updatedMessage)
+                if(!updatedMessage){
+                    const notFoundError = new CustomError('Message not found',404)
+                    return  next(notFoundError)
+                }
+                return res.status(200).json({
+                    status:'success',
+                    data:{
+                        updatedMessage:updatedMessage
+                    },
+                    message:'Adding reaction successfullly'   
+                })  
+            }catch(err){
+                return res.status(500).json({
+                    status:'error',
+                    message:'Unexpected error occured',
+                    errorInfo: err.message
+                })
+            }
       }
 }

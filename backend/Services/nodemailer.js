@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer')
-const { generateOtp } = require('./speakeasy')
+const { generateOtp } = require('./speakeasy');
+const CustomError = require('../utils/CustomError');
 require('dotenv').config()
 
 
@@ -23,7 +24,7 @@ module.exports = {
          }
         transporter.sendMail(mailOptions,function(err, info){
             if(err){
-                console.log(err)
+                throw new CustomError('Nodemailer error ', 500)
             }else{
                 console.log("Email sent : " + info.response)
             }

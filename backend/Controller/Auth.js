@@ -45,7 +45,7 @@ module.exports = {
          
      },
      register: async (req , res , next) => {
-          const { email , password } = req.body;
+           const { email } = req.body
           try{
               const user = await User.findOne({email:email})
               if(user){
@@ -53,7 +53,7 @@ module.exports = {
               }  
               const  newUser = new User({
                     email: email,
-                    password:password
+                    password: req.body.password
               })
               const userDoc = await newUser.save()
               if(!userDoc){
@@ -84,7 +84,7 @@ module.exports = {
                     expiresIn:'24h'
                   } 
               )
-              const { password , ...data} =   userDoc
+              const { password , ...data} =   userDoc._doc
               res.status(201).json({ 
                     status:'succes',
                     data:{
@@ -98,7 +98,7 @@ module.exports = {
           }catch(err){
               return  res.status(500).json({ 
                  status:'error',
-                 message: error.message,
+                 message: err.message,
               })
           }
      },

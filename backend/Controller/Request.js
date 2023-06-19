@@ -2,6 +2,7 @@ const { isValidObjectId } = require("mongoose");
 const Request = require("../Model/Request");
 const ConversationPrivate = require("../Model/Conversation.private");
 const User = require("../Model/User");
+const Friendship = require("../Model/Friendship");
 const { ObjectId } = require('mongoose').Types;
 
 module.exports = {
@@ -12,16 +13,23 @@ module.exports = {
                 const  request = await Request.findById(requestId)
                 
                  if(!request) return res.status(404).json({status:404, message:'FriendRequest not found'})
-                 if(request.destinationID == req.userId){
+                 if(request.destinationID == req.userId && request.status !== 'approved'){
                        await Request.findByIdAndUpdate(requestId,{status:'approved'},{ new:true})
-                       const newConversation = new ConversationPrivate({
+                       const newConversation =  new ConversationPrivate({
                              members:[
                                 request.author,
                                 req.userId
-                          ]
-                      })
-                 const result = await newConversation.save()
-                 if(!result) return res.status(500).json({status:500, message:'Conversation not created'})  
+                        ]
+                       })
+                       const newFriendShip = new Friendship({
+                             user1:request.author,
+                             user2:req.userId,
+                             status:'Accepted'
+                       })
+                 await  newConversation.save()
+
+                 const result = await newFriendShip.save(); 
+                 if(!result) return res.status(500).json({status:500, message:'Conversation / friendship not created'})  
                  return res.status(201).json({status:201, message:'friendRequest accpeted susscesfully', request:request}) 
 
                  }else{
@@ -42,7 +50,7 @@ module.exports = {
                              await Request.findByIdAndDelete(requestId)
                              return res.status(201).json({status:201, message:'Request rejected succesfully'}); 
                       }else{
-                        return res.status(401).json({status:401,message:'Not authorized action'})
+                          return res.status(401).json({status:401,message:'Not authorized action'})
                       }
 
                   }catch(err){

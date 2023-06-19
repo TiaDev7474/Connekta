@@ -8,7 +8,11 @@ const PrivateConversationSchema = new Schema({
             type:String
         }     
     }],
-    
+    status:{
+         type:String,
+         enum:['Blocked','Hidden','Muted','Archived','Active'],
+         default:'Active'
+    }  
 },
 { 
     timestamps: true ,
