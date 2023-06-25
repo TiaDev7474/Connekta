@@ -103,7 +103,7 @@ module.exports = {
           }
      },
 
-      verifyOtp:async(req ,res) =>{
+      verifyOtp:async(req ,res, next) =>{
         try{
             const otp = await Otp.findOne({ author:req.userId })
             if(!otp){
@@ -115,7 +115,9 @@ module.exports = {
               const error = new CustomError(`Not valid Otp `,401);
               next(error)
             }
-            const user =   User.findOneAndUpdate({_id:req.userId},{account_verify:true},{ new: true})
+            console.log(req.userId)
+            const user = await  User.findOneAndUpdate({_id:req.userId},{account_verify:true},{ new: true})
+            console.log(user)
             if(!user){
               if(!user){
                 const error = new CustomError('User not found',404);
@@ -138,38 +140,40 @@ module.exports = {
              const { email } = req.body;
              const otp =  await generateOtp()
              const isOtpExist =  Otp.findOne({ author:req.userId})
-             if(isOtpExist){
-                const updates = {
-                    passcode:opt,
-                    createdAt: new Date(Date.now() + 60 * 4 * 1000)
-                  }
-                const otpUpdated = Otp.findOneAndUpdate({ author:req.userId},updates,{ returnOriginal:false})
-                if(!otpUpdated){
-                      const error = new CustomError('Otp to update Not found', 404)
-                      next(error)
-                 }
-                sendOtpToUser(email,otpUpdated.passcode)
-                return  res.status(200).json({
-                     status:'success',
-                     message:'Otp send succesfully'
-                 })
-             }
+            
+            //  if(isOtpExist){
+            //     const updates = {
+            //         passcode:opt,
+            //         createdAt: new Date(Date.now() + 60 * 4 * 1000)
+            //       }
+            //     const otpUpdated = Otp.findOneAndUpdate({ author:req.userId},updates,{ returnOriginal:false})
+            //     if(!otpUpdated){
+            //           const error = new CustomError('Otp to update Not found', 404)
+            //           next(error)
+            //      }
+            //     sendOtpToUser(email,otpUpdated.passcode)
+            //     return  res.status(200).json({
+            //          status:'success',
+            //          message:'Otp send succesfully'
+            //      })
+            //  }
              const newOtp = new Otp({
               passcode:otp,
               author:req.userId
              })
-              const savedOtp = newOtp.save()
+              const savedOtp = await newOtp.save()
+              console.log(savedOtp._doc)
               if(!savedOtp){
                   const mongodbError = new CustomError('Unexpected error occured from mongodb', 500)
                   next(mongodbError)
               }
               sendOtpToUser(email,savedOtp.passcode)
-              res.status(200).json({
+               return res.status(200).json({
                   status:'success',
                   message:'Otp send succesfully'
               })
 
-        }catch{
+        }catch(err){
               res.status(500).json({
                 status:'error',
                 message: err.message

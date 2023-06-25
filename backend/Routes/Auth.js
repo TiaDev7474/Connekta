@@ -4,6 +4,7 @@ const { authMiddleware } = require('../Middleware/Auth');
 const authController = require('../Controller/Auth');
 const passport = require('passport');
 const { verify } = require('../Services/Third_party_auth.js/facebookLogin');
+const { rateLimiter } = require('../Middleware/RateLimiting');
 
 
 const FacebookStrategy = require('passport-facebook').Strategy;
@@ -73,9 +74,9 @@ router.get('/redirect/facebook',passport.authenticate('facebook',{
 }));
 
 //other routes
-router.post('/login',authController.loginUser);
+router.post('/login', rateLimiter ,authController.loginUser);
 router.post('/register',authController.register);
-router.patch('/verify',authMiddleware,authController.verifyOtp);
+router.post('/verify',authMiddleware,authController.verifyOtp);
 router.post('/resendcode',authMiddleware,authController.resendOtp);
 
 module.exports = router;

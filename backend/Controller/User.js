@@ -4,7 +4,9 @@ const { findUserById } = require("../utils/auth")
 module.exports = {
      fetchUser: async (req , res ) => {
            try{
+             
              const user = await User.findById(req.userId)
+             
              if(!user) return res.status(403).json({message:'Unauthorized to perform this request'})
              const {password,loginAttempt ,...data} = user._doc;
              return res.status(200).json({...data , message:'Request successfully made' }) 

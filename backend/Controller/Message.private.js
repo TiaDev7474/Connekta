@@ -128,15 +128,13 @@ module.exports = {
                 const option = {
                      new: true 
                 }
-               
                 const message = await Message.findOne(filter)
                 if(!message){
                     const notFoundError = new CustomError('Conversation not found',404)
                     return  next(notFoundError)
                 }
                
-                const isUserReactedToMessage =  message.reactions.some( reaction=> reaction.author == req.userId)
-                console.log(isUserReactedToMessage)
+               const isUserReactedToMessage =  message.reactions.some( reaction=> reaction.author == req.userId)
                if(isUserReactedToMessage){
                    filter = {...filter , 'reactions.author':req.userId}
                    update.$set = {'reactions.$.type':reactionType}
@@ -150,7 +148,6 @@ module.exports = {
                }
 
                 const updatedMessage = await Message.findOneAndUpdate(filter, update, option);
-                console.log(updatedMessage)
                 if(!updatedMessage){
                     const notFoundError = new CustomError('Message not found',404)
                     return  next(notFoundError)
@@ -166,7 +163,6 @@ module.exports = {
                 return res.status(500).json({
                     status:'error',
                     message:'Unexpected error occured',
-                    errorInfo: err.message
                 })
             }
       }
